@@ -8,6 +8,8 @@ import android.support.v7.widget.RecyclerView
 import android.widget.Toast
 import cosmin.rasa.kotlin.Helpers.ForecastListAdapter
 import cosmin.rasa.kotlin.Helpers.ForecastRequest
+import cosmin.rasa.kotlin.Helpers.RequestForecastCommand
+import cosmin.rasa.kotlin.Models.Forecast
 import org.jetbrains.anko.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
@@ -33,17 +35,14 @@ class MainActivity : AppCompatActivity() {
 
         val forecastList : RecyclerView = find(R.id.forecast_list)
         forecastList.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
-        forecastList.adapter = ForecastListAdapter(items)
-
-        val f1 = Forecast(Date(), 27.5f, "Rainy")
-        val f2 = f1.copy(temperature = 30f)
 
 
-        val (date, temperature, details) = f2
-        async {
-            ForecastRequest(url = "api.openweathermap.org/data/2.5/weather?q=London").run()
-            uiThread { longToast("request performed") }
-        }
+       async {
+           val result = RequestForecastCommand("94043").execute()
+           uiThread {
+               forecastList.adapter = ForecastListAdapter(result)
+           }
+       }
     }
 
     private fun add(s: Int, y: Int): Int = s + y
