@@ -5,11 +5,13 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
+import android.view.View
 import android.widget.Toast
 import cosmin.rasa.kotlin.Helpers.ForecastListAdapter
 import cosmin.rasa.kotlin.Helpers.ForecastRequest
 import cosmin.rasa.kotlin.Helpers.RequestForecastCommand
 import cosmin.rasa.kotlin.Models.Forecast
+import cosmin.rasa.kotlin.Models.ModelForecast
 import org.jetbrains.anko.async
 import org.jetbrains.anko.find
 import org.jetbrains.anko.longToast
@@ -40,7 +42,12 @@ class MainActivity : AppCompatActivity() {
        async {
            val result = RequestForecastCommand("94043").execute()
            uiThread {
-               forecastList.adapter = ForecastListAdapter(result)
+               forecastList.adapter = ForecastListAdapter(result,
+                       object : ForecastListAdapter.OnItemClickListener{
+                           override fun invoke(forecast: ModelForecast){
+                               toast(forecast.date)
+                           }
+                       })
            }
        }
     }
