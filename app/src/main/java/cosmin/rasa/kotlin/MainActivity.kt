@@ -4,19 +4,11 @@ import android.content.Context
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.view.View
 import android.widget.Toast
 import cosmin.rasa.kotlin.Helpers.ForecastListAdapter
-import cosmin.rasa.kotlin.Helpers.ForecastRequest
 import cosmin.rasa.kotlin.Helpers.RequestForecastCommand
-import cosmin.rasa.kotlin.Models.Forecast
-import cosmin.rasa.kotlin.Models.ModelForecast
-import org.jetbrains.anko.async
-import org.jetbrains.anko.find
-import org.jetbrains.anko.longToast
-import org.jetbrains.anko.uiThread
-import java.util.*
+import org.jetbrains.anko.*
+import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
@@ -35,19 +27,13 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val forecastList : RecyclerView = find(R.id.forecast_list)
-        forecastList.layoutManager = LinearLayoutManager(this) as RecyclerView.LayoutManager?
+        forecastList.layoutManager = LinearLayoutManager(this)
 
 
        async {
            val result = RequestForecastCommand("94043").execute()
            uiThread {
-               forecastList.adapter = ForecastListAdapter(result,
-                       object : ForecastListAdapter.OnItemClickListener{
-                           override fun invoke(forecast: ModelForecast){
-                               toast(forecast.date)
-                           }
-                       })
+               forecastList.adapter = ForecastListAdapter(result) {toast(it.date)}
            }
        }
     }

@@ -18,7 +18,7 @@ import org.jetbrains.anko.find
 /**
  * Created by Rasa Cosmin on 19.10.2017.
  */
-class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: OnItemClickListener) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
+class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: (ModelForecast) -> Unit) : RecyclerView.Adapter<ForecastListAdapter.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder?, position: Int) {
         holder?.bindForecast(weekForecast[position])
     }
@@ -30,34 +30,16 @@ class ForecastListAdapter(val weekForecast: ForecastList, val itemClick: OnItemC
         return ViewHolder(view, itemClick)
     }
 
-    class ViewHolder(view: View, val itemClick: OnItemClickListener) : RecyclerView.ViewHolder(view) {
-        private val iconView: ImageView
-        private val dateView: TextView
-        private val descriptionView: TextView
-        private val maxTempView: TextView
-        private val minTempView: TextView
-
-        init {
-            iconView = view.find(R.id.icon)
-            dateView = view.find(R.id.date)
-            descriptionView = view.find(R.id.description)
-            maxTempView = view.find(R.id.maxTemp)
-            minTempView = view.find(R.id.minTemp)
-        }
-
-        fun bindForecast(forecast: ModelForecast) {
+    class ViewHolder(view: View, val itemClick: (ModelForecast) -> Unit) : RecyclerView.ViewHolder(view) {
+               fun bindForecast(forecast: ModelForecast) {
             with(forecast) {
-                Picasso.with(itemView.ctx).load(iconUrl).into(iconView)
-                dateView.text = date
-                descriptionView.text = description
-                maxTempView.text = "${high.toString()}"
-                minTempView.text = "${low.toString()}"
+                Picasso.with(itemView.ctx).load(iconUrl).into(itemView.icon)
+                itemView.date.text = date
+                itemView.description.text = description
+                itemView.maxTemp.text = high.toString()
+                itemView.minTemp.text = low.toString()
                 itemView.setOnClickListener { itemClick(this) }
             }
         }
-    }
-
-    interface OnItemClickListener {
-        operator fun invoke(forecast: ModelForecast)
     }
 }
